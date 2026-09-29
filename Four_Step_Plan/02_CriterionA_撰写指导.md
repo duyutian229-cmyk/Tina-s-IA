@@ -56,11 +56,12 @@
 ## 三、成功标准清单（建议稿，约 140 词）
 
 > 已按 2026-09-13 确认的四个决定重写：**店内扬声器公共播放 / 最小点单自制 / SL / 2027-01-18 终稿**。
+> 昵称规则按 Tina 在 2026-09-29 的决定更新：必填，只拒绝空白，不限制其他字符。
 > 每条都写成**可测试**的形式（含数值边界）。Tina 可以改措辞，但不要改"可测量"这个性质。
 
 | # | 成功标准（英文建议稿） | 可测性说明 |
 |---|---|---|
-| 1 | The system must accept an order containing a drink item and an optional display nickname (max 20 characters), and must reject an empty or over-length nickname with a specific error message. | 边界输入可测：空、20 字符、21 字符 |
+| 1 | The system must accept an order containing a drink item and a required nickname, reject an empty or whitespace-only nickname with a clear error message, and allow other characters without a length limit. | 测试空字符串、仅空格、中文、emoji、符号及较长昵称；只拒绝前两种 |
 | 2 | The system must accept optional context inputs (weather, time of day, ambience preference) and must still generate a complete recommendation when all of them are absent. | 空值路径可测 |
 | 3 | For an identical input set and an identical track library, the system must return the identical track, so that every recommendation is reproducible. | 同输入跑 2 次比对 |
 | 4 | The system must select a track by scoring stored metadata tags against a weighted profile, and must return the ranked result **within 2 seconds** on the standard laptop. | 计时 |
@@ -126,10 +127,8 @@
 
 ---
 
-## 六、待 Tina 确认的一个小冲突
+## 六、昵称规则已确认（2026-09-29）
 
-**昵称是必填还是选填？**
-- 现有稿件的 SC1 写"coffee type and nickname as **required** inputs"；
-- 老师转述的设想是"用户的昵称（**选填**）"。
+早期稿件将昵称写为 **required**，老师转述的设想曾是**选填**。Tina 现在确定采用必填规则：空字符串和仅有空白字符的输入应被拒绝；中文、emoji、符号以及较长昵称均可接受，不设最大长度。上表 SC1 已按这个决定修改。
 
-**建议**：改为**选填**（更符合隐私友好，也更好论证），SC1 相应改为"若填写则校验长度与字符，为空时使用默认称呼"。上表 SC1 已按此写。若 Tina 坚持必填，把 `optional` 去掉即可，其余不变。
+当前网页用 `required` 提示用户，Flask 再用 `.strip()` 拒绝空白输入；正式测试时两层都应检查。
